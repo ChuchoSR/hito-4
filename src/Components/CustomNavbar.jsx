@@ -3,6 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
+import { Link } from 'react-router-dom';
 
 const CustomNavbar = ({ isLoggedIn, total, toggleCart  }) => {
     const formatPrice = (price) => {
@@ -14,19 +15,34 @@ const CustomNavbar = ({ isLoggedIn, total, toggleCart  }) => {
             <Navbar bg="dark" data-bs-theme="dark">
                 <Container className='navbar-container'>
                     <div className='navbar-left'>
-                        <Navbar.Brand href="#home" className='brand'>Pizzería Mamma mía!</Navbar.Brand>
+                        <Navbar.Brand className='brand'>Pizzería Mamma mía!</Navbar.Brand>
                         <Nav className="me-auto">
-                            <Nav.Link href="#home" className='nav-link active'>Home</Nav.Link>
-                            <Nav.Link href="#login" className='nav-link active'>
-                                {isLoggedIn ? '🔐Login' : '🔓Login'}
-                            </Nav.Link>
-                            <Nav.Link href="#pricing" className='nav-link active'>
-                                {isLoggedIn ? '🔐Register' : '🔓Register'}
-                            </Nav.Link>
+                            <Link 
+                                to="/" 
+                                className='nav-link active'>
+                                    Home
+                                    </Link>
+                            <Link
+                                to="/register"
+                                className='nav-link active'>
+                                    {isLoggedIn ? '🔓Logout' : '🔐Registro'}    
+                            </Link>
+                            <Link
+                                to="/login"
+                                className='nav-link active'>
+                                    {isLoggedIn ? '🔓Logout' : '🔐Login'}    
+                            </Link>
                         </Nav>
                     </div>
                     <div className='navbar-right'>
-                        <Button variant="outline-primary" onClick={toggleCart}>🛒 Total: {formatPrice(total)}</Button>
+                        <Link
+                            to="/cart"
+                            className='nav-link active'>
+                                <Button 
+                                    variant="outline-primary" onClick={toggleCart}>🛒 
+                                    Total: {formatPrice(total)}
+                                </Button>
+                        </Link>
                     </div>
                 </Container>
             </Navbar>

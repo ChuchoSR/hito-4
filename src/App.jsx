@@ -1,15 +1,22 @@
-import { useState } from 'react';
-import './App.css';
-import CustomNavbar from './Components/CustomNavbar';
-import Footer from './Components/Footer';
-import Home from './Pages/Home';
-import Cart from './Components/Cart';
-import Pizza from './Components/Pizza';
+import { useState } from "react";
+import "./App.css";
+import CustomNavbar from "./Components/CustomNavbar";
+import Footer from "./Components/Footer";
+import Cart from "./Pages/Cart";
+import Home from "./Pages/Home";
+import Pizza from "./Pages/Pizza";
+import Login from "./Pages/Login";
+import Register from "./Pages/Register";
+import { Routes, Route } from "react-router-dom";
+import NotFound from "./Pages/NotFound";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [cart, setCart] = useState([]);
-  const [isCartOpen, setIsCartOpen] = useState(false); // Nuevo estado para el modal del carrito
+  const [users, setUsers] = useState([
+    { email: "prueba@example.com", password: "123456" },
+    { email: "prueba2@example.com", password: "123456" },
+  ]);
 
   const addToCart = (product) => {
     setCart((prevCart) => {
@@ -34,18 +41,25 @@ function App() {
       <CustomNavbar
         isLoggedIn={isLoggedIn}
         total={calculateTotal()}
-        toggleCart={() => setIsCartOpen(!isCartOpen)} // Controla el modal
+        toggleCart={() => setIsCartOpen(!isCartOpen)}
       />
-      {/* <Home addToCart={addToCart} />
-      {isCartOpen && (
-        <div className="modal-overlay" onClick={() => setIsCartOpen(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <Cart cart={cart} setCart={setCart} />
-            <button onClick={() => setIsCartOpen(false)}>Cerrar</button>
-          </div>
-        </div> 
-      )} */} {/* comentado por el desafio */}
-      <Pizza/>
+      <Routes>
+        <Route path="/" element={<Home addToCart={addToCart} />} />
+        <Route path="/cart" element={<Cart cart={cart} setCart={setCart} />} /> {/* Aquí */}
+        <Route path="/pizza/p001" element={<Pizza />} />
+        <Route
+          path="/login"
+          element={<Login setIsLogin={setIsLoggedIn} users={users} />}
+        />
+        <Route
+          path="/register"
+          element={<Register setUsers={setUsers} users={users} />}
+        />
+        <Route
+          path="*"
+          element={<NotFound/>}
+        />
+      </Routes>
       <Footer />
     </div>
   );

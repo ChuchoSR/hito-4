@@ -1,6 +1,7 @@
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import React, {useState} from 'react';
+import { Link } from 'react-router-dom';
 
 function Login({setIsLogin}) {
 
@@ -68,7 +69,17 @@ const handleSubmit = (e) => {
                 Login
             </Button>
             {error && <div className="alert alert-danger mt-3">{error}</div>}
-
+            <p className="mt-3">
+                ¿Ya tiene una cuenta?{" "}
+                <span
+                style={{ color: "blue", cursor: "pointer" }}
+                onClick={() => setIsLogin(true)}
+                >
+                <Link to="/register">
+                    Regístrese
+                </Link>
+                </span>
+            </p>
         </Form>
     );
 }
