@@ -2,8 +2,11 @@ import React from 'react'
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
+import { useCart } from '../Context/CartContext';
 
-const CardPizza = ({name, price, ingredients, img, addToCart, id}) => {
+const CardPizza = ({name, price, ingredients, img,  id}) => {
+
+  const { addToCart } = useCart();
 
   const formatPrice = (price) => {
     return `$${price.toLocaleString('es-CL')}`;

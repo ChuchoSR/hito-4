@@ -1,6 +1,13 @@
 import React from 'react'
+import { useCart } from '../Context/CartContext'
 
-const Cart = ({cart, setCart}) => {
+const Cart = () => {
+
+    const {cart, setCart} = useCart();
+
+    const formatPrice = (price) => {
+        return `$${price.toLocaleString('es-CL')}`;
+    };
 
     const increaseQuantity = (id) => {
         setCart((prevCart) => 
@@ -41,8 +48,10 @@ const Cart = ({cart, setCart}) => {
             ) : (
                 <p>El carrito está vacío</p>
             )}
-            <h2>Total: ${calculateTotal()}</h2>
-            <button onClick={() => alert('Funcionalidad de pago no implementada aún')}>Pagar</button>
+            <h2>Total: {formatPrice(calculateTotal())}</h2>
+            <button onClick={() => alert('Funcionalidad de pago no implementada aún')}>
+                Pagar
+            </button>
         </div>
     )
 }
