@@ -5,13 +5,18 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import { Link } from 'react-router-dom';
 import { CartContext } from '../Context/CartContext';
+import { UserContext } from '../Context/UserContext';
 
-const CustomNavbar = ({ isLoggedIn, total, toggleCart }) => {
+const CustomNavbar = ({toggleCart }) => {
+
+    const { token, logout } = useContext(UserContext);
+    const { calculateTotal } = useContext(CartContext);
+
     const formatPrice = (price) => {
         return `$${price.toLocaleString('es-CL')}`;
     };
 
-    const { calculateTotal } = useContext(CartContext);
+    
 
     /* console.log("Total calculado:", calculateTotal()); */
 
@@ -22,12 +27,21 @@ const CustomNavbar = ({ isLoggedIn, total, toggleCart }) => {
                     <Navbar.Brand className='brand'>Pizzería Mamma mía!</Navbar.Brand>
                     <Nav className="me-auto">
                         <Link to="/" className='nav-link active'>Home</Link>
-                        <Link to="/register" className='nav-link active'>
-                            {isLoggedIn ? '🔓Logout' : '🔐Registro'}
-                        </Link>
-                        <Link to="/login" className='nav-link active'>
-                            {isLoggedIn ? '🔓Logout' : '🔐Login'}
-                        </Link>
+                        {token ? (
+                            // Si el token es true, mostramos Profile y Logout
+                            <>
+                                <Link to="/profile" className='nav-link active'>Profile</Link>
+                                <Button variant="link" className='nav-link active' onClick={logout}>
+                                    🔓Logout
+                                </Button>
+                            </>
+                        ) : (
+                            // Si el token es false, mostramos Login y Register
+                            <>
+                                <Link to="/register" className='nav-link active'>🔐Registro</Link>
+                                <Link to="/login" className='nav-link active'>🔐Login</Link>
+                            </>
+                        )}
                     </Nav>
                 </div>
                 <div className='navbar-right'>

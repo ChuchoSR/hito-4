@@ -2,6 +2,7 @@ import React from 'react'
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
+import { Link } from 'react-router-dom';
 import { useCart } from '../Context/CartContext';
 
 const CardPizza = ({name, price, ingredients, img,  id}) => {
@@ -29,7 +30,11 @@ const CardPizza = ({name, price, ingredients, img,  id}) => {
           <Card.Body>
             <h3>{`Precio: ${formatPrice(price)}`}</h3>
             <div className="btn-cards">
-              <Button variant="light">Ver Más👀</Button>
+              <Link
+                to={`/pizza/${id}`}
+              >
+                <Button variant="light">Ver Más👀</Button>
+              </Link>
               <Button variant="dark" 
               onClick={() => 
                 addToCart({ id, name, price })}

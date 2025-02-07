@@ -1,53 +1,66 @@
-import { useState, useEffect } from "react"
-/* import React{useState} from 'react' */
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import PizzaModal from "./PizzaModal"; // Importamos el modal
+import Button from 'react-bootstrap/Button';
 
 const Pizza = () => {
+  const { id } = useParams();
+  const [pizzas, setPizzas] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [modalShow, setModalShow] = useState(false); // Estado para controlar el modal
 
-    const [pizzas, setPizzas] = useState([])
+  const url = `http://localhost:5000/api/pizzas/${id}`;
 
-    const url = 'http://localhost:5000/api/pizzas'
-
-    const getData = async () => {
+  useEffect(() => {
+    const fetchPizzas = async () => {
+      try {
         const res = await fetch(url);
+        if (!res.ok) throw new Error("Pizza no encontrada");
         const data = await res.json();
-
         setPizzas(data);
-    }
-
-    useEffect(() => {
-        getData();
-    }, []);
-
-    const formatPrice = (price) => {
-        return `$${price.toLocaleString('es-CL')}`;
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     };
+    fetchPizzas();
+  }, [id]);
+
+  if (loading) return <p>Cargando los detalles de tu pizza...</p>;
+  if (error) return <p>Ha ocurrido un error: {error}</p>;
 
   return (
-    <div className="pizza-container"> 
-        {pizzas.length > 0 ? 
-            ( pizzas.map((pizza) => ( 
-                <div key={pizza.id} className="pizza-card">
-                    <div className="top">
-                        <div className="top-left">
-                            <h2 className="pizza-name">{pizza.name}</h2> 
-                            <h3>{formatPrice(pizza.price)}</h3>
-                        </div>
-                        <div className="top-right">
-                            <ul>
-                                {pizza.ingredients.map((ingredient) => (
-                                    <li key={ingredient}>{ingredient}</li>
-                                ))}
-                            </ul>    
-                        </div> 
-                    </div>                 
-                    <img src={pizza.img} alt="image-pizza" className="pizza-image"/>
-                    <h4>{pizza.desc}</h4> 
-                </div> )
-                ) 
-            ) : ( <p>Loading pizzas...</p> )} 
+    <div className="pizza-container">
+      <div className="pizza-detail">
+        <h2>{pizzas.name}</h2>
+        <p>{pizzas.desc}</p>
+        <h3>Precio: ${pizzas.price.toLocaleString('es-CL')}</h3>
+        <ul>
+          {pizzas.ingredients.map((ingredient, index) => (
+            <li key={index}>{ingredient}</li>
+          ))}
+        </ul>
+        <img
+          src={pizzas.img}
+          alt={pizzas.name}
+          style={{ width: '100%', borderRadius: '10px', cursor: 'pointer' }}
+          onClick={() => setModalShow(true)} // Abrir modal al hacer clic en la imagen
+        />
+        <Button variant="primary" onClick={() => setModalShow(true)}>
+          Ver más detalles
+        </Button>
+      </div>
+
+      {/* Modal */}
+      <PizzaModal
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        pizza={pizzas}
+      />
     </div>
-  )
-}
+  );
+};
 
-export default Pizza
-
+export default Pizza;

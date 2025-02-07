@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, {useContext} from "react";
 import "./App.css";
 import CustomNavbar from "./Components/CustomNavbar";
 import Footer from "./Components/Footer";
@@ -7,52 +7,64 @@ import Home from "./Pages/Home";
 import Pizza from "./Pages/Pizza";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import NotFound from "./Pages/NotFound";
 import { useCart } from "./Context/CartContext";
 import Profile from "./Components/Profile";
+import { UserProvider, UserContext } from "./Context/UserContext"; // Importamos UserProvider y UserContext
+
+// Componente para rutas protegidas
+const ProtectedRoute = ({ children }) => {
+  const { token } = useContext(UserContext);
+  return token ? children : <Navigate to="/login" />;
+};
+
+// Componente para rutas de autenticación (login y register)
+const AuthRoute = ({ children }) => {
+  const { token } = useContext(UserContext);
+  return !token ? children : <Navigate to="/" />;
+};
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  /* const [cart, setCart] = useState([]); */
-  const [users, setUsers] = useState([
-    { email: "prueba@example.com", password: "123456" },
-    { email: "prueba2@example.com", password: "123456" },
-  ]);
-
   const { cart, addToCart, calculateTotal } = useCart();
 
-
   return (
-    <div className="app-container">
-      <CustomNavbar
-        isLoggedIn={isLoggedIn}
-        total={calculateTotal()}
-        /* toggleCart={() => setIsCartOpen(!isCartOpen)} */
-      />
-      <Routes>
-        <Route path="/" element={<Home addToCart={addToCart} />} />
-        <Route path="/cart" element={<Cart/>} /> {/* Aquí */}
-        <Route path="/pizza/p001" element={<Pizza/>} />
-        <Route
-          path="/login"
-          element={<Login setIsLogin={setIsLoggedIn} users={users} />}
-        />
-        <Route
-          path="/register"
-          element={<Register setUsers={setUsers} users={users} />}
-        />
-        <Route
-          path="*"
-          element={<NotFound/>}
-        />
-        <Route
-          path="/profile"
-          element={<Profile/>}
-        />
-      </Routes>
-      <Footer />
-    </div>
+    <UserProvider> {/* Envolvemos la aplicación con UserProvider */}
+      <div className="app-container">
+        <CustomNavbar total={calculateTotal()} />
+        <Routes>
+          <Route path="/" element={<Home addToCart={addToCart} />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/pizza/:id" element={<Pizza />} /> {/* Usamos :id para dinámico */}
+          <Route
+            path="/login"
+            element={
+              <AuthRoute>
+                <Login />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <AuthRoute>
+                <Register />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        <Footer />
+      </div>
+    </UserProvider>
   );
 }
 
